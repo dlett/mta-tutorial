@@ -1,0 +1,15 @@
+.idea
+*.dll
+*.db
+*.so
+*.exe
+*.keys
+/dumps
+/mods/deathmatch/backups
+/mods/deathmatch/databases
+/mods/deathmatch/logs
+/mods/deathmatch/resource-cache
+/mods/deathmatch/settings.xml
+/mods/deathmatch/banlist.xml
+/mods/deathmatch/mtaserver.conf
+/mods/deathmatch/vehiclecolors.conf
