@@ -2,11 +2,13 @@
 function createVehicleForPlayer(player, command, model)
     local db = exports.db:getConnection()
     local x, y, z = getElementPosition(player)
+    local rotX, rotY, rotZ = getElementRotation(player)
+    rotZ = rotZ + 90 -- lets turn the car 90 degrees to the left so the driver door faces us.
     y = y + 5
 
-    dbExec(db, 'INSERT INTO vehicles (model, x, y, z) VALUES (?, ?, ?, ?)', model, x, y, z)
+    dbExec(db, 'INSERT INTO vehicles (model, x, y, z, rotation_x, rotation_y, rotation_z) VALUES (?, ?, ?, ?, ?, ?, ?)', model, x, y, z, rotX, rotY, rotZ)
 
-    local vehicleObject = createVehicle(model, x, y, z)
+    local vehicleObject = createVehicle(model, x, y, z, rotX, rotY, rotZ)
 
     dbQuery(function (queryHandle)
         local results = dbPoll(queryHandle, 0)
@@ -24,7 +26,7 @@ function loadAllVehicles(queryHandle)
     local results = dbPoll(queryHandle, 0)
 
     for index, vehicle in pairs(results) do
-        local vehicleObject = createVehicle(vehicle.model, vehicle.x, vehicle.y, vehicle.z)
+        local vehicleObject = createVehicle(vehicle.model, vehicle.x, vehicle.y, vehicle.z, vehicle.rotation_x, vehicle.rotation_y, vehicle.rotation_z)
 
         setElementData(vehicleObject, "id", vehicle.id)
     end
@@ -43,7 +45,8 @@ addEventHandler('onResourceStop', resourceRoot, function ()
     for index, vehicle in pairs(vehicles) do
         local id = getElementData(vehicle, 'id')
         local x, y, z = getElementPosition(vehicle)
+        local rotX, rotY, rotZ = getElementRotation(vehicle)
 
-        dbExec(db, 'UPDATE vehicles SET x = ?, y = ?, z = ? WHERE id = ?', x, y, z, id)
+        dbExec(db, 'UPDATE vehicles SET x = ?, y = ?, z = ?, rotation_x = ?, rotation_y = ?, rotation_z = ? WHERE id = ?', x, y, z, rotX, rotY, rotZ, id)
     end
 end)
