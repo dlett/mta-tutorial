@@ -1,1 +1,1 @@
-<meta>    <script src="players.lua" type="server"/></meta>
+<meta>    <script src="players.lua" type="server"/>    <script src="authentication.lua" type="server"/></meta>
