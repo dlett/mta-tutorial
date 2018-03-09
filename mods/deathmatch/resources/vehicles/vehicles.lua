@@ -50,3 +50,11 @@ addEventHandler('onResourceStop', resourceRoot, function ()
         dbExec(db, 'UPDATE vehicles SET x = ?, y = ?, z = ?, rotation_x = ?, rotation_y = ?, rotation_z = ? WHERE id = ?', x, y, z, rotX, rotY, rotZ, id)
     end
 end)
+
+addCommandHandler('fixme', function (player)
+    local vehicle = getPedOccupiedVehicle(player)
+    if not vehicle then
+        return outputChatBox('You are not in a vehicle.', player, 255, 100, 100)
+    end
+    fixVehicle(vehicle)
+end)
