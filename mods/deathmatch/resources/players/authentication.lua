@@ -32,30 +32,31 @@ addCommandHandler('register', function (player, command, username, password)
 end, false, false)
 
 -- login to their account
-addCommandHandler('accountLogin', function (player, command, username, password)
-    if not username or not password then
-        return outputChatBox('SYNTAX: /' .. command .. ' [username] [password]', player, 255, 255, 255)
-    end
+addEvent('auth:login-attempt', true)
+addEventHandler('auth:login-attempt', root, function (username, password)
 
     local account = getAccount(username)
     if not account then
-        return outputChatBox('No such account could be found with that username or password.', player, 255, 100, 100)
+        return outputChatBox('No such account could be found with that username or password.', source, 255, 100, 100)
     end
 
     local hashedPassword = getAccountData(account, 'hashed_password')
+    local player = source
     passwordVerify(password, hashedPassword, function (isValid)
         if not isValid then
             return outputChatBox('No such account could be found with that username or password.', player, 255, 100, 100)
         end
 
         if logIn(player, account, hashedPassword) then
-           return outputChatBox('You have successfully logged in!', player, 100, 255, 100)
+            spawnPlayer(player, 0, 0, 10)
+            setCameraTarget(player, player)
+           return triggerClientEvent(player, 'login-menu:close', player)
         end
 
         return outputChatBox('An unknown error occured while attempting to authenticate.', player, 255, 100, 100)
     end)
 
-end, false, false)
+end)
 
 -- logout of their account
 addCommandHandler('accountLogout', function (player)
