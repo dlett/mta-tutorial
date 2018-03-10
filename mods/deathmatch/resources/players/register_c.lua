@@ -1,11 +1,7 @@
 local window
 
-addEvent('login-menu:open', true)
-addEventHandler('login-menu:open', root, function ()
-    -- fade their camera in
-    setCameraMatrix (0, 0, 100, 0, 100, 50)
-    fadeCamera(true)
-
+addEvent('register-menu:open', true)
+addEventHandler('register-menu:open', root, function ()
     -- initialize the cursor
     showCursor(true, true)
     guiSetInputMode('no_binds')
@@ -33,8 +29,8 @@ addEventHandler('login-menu:open', root, function ()
     local passwordInput = guiCreateEdit(10, 110, width - 20, 30, '', false, window)
     guiEditSetMasked(passwordInput, true)
 
-    local loginButton = guiCreateButton(10, 150, width - 20, 30, 'Login', false, window)
-    addEventHandler('onClientGUIClick', loginButton, function (button, state)
+    local registerButton = guiCreateButton(10, 150, width - 20, 30, 'Sign Up', false, window)
+    addEventHandler('onClientGUIClick', registerButton, function (button, state)
         if button ~= 'left' or state ~= 'up' then
             return
         end
@@ -61,23 +57,22 @@ addEventHandler('login-menu:open', root, function ()
             return
         end
 
-        triggerServerEvent('auth:login-attempt', localPlayer, username, password)
+        triggerServerEvent('auth:register-attempt', localPlayer, username, password)
     end, false)
 
-    local registerButton = guiCreateButton(10, 190, width / 2 - 15, 30, 'Sign Up', false, window)
-    addEventHandler('onClientGUIClick', registerButton, function ()
-        triggerEvent('login-menu:close', localPlayer)
-        triggerEvent('register-menu:open', localPlayer)
-    end, false)
+    local cancelButton = guiCreateButton(10, 190, width - 20, 30, 'Cancel', false, window)
+    addEventHandler('onClientGUIClick', cancelButton, function (button, state)
+        if button ~= 'left' or state ~= 'up' then
+            return
+        end
 
-    local forgotPasswordButton = guiCreateButton(width / 2 + 5, 190, width / 2 - 15, 30, 'Forgot Password', false, window)
-    addEventHandler('onClientGUIClick', forgotPasswordButton, function ()
-        outputChatBox('Coming soon.', 100, 100, 255)
+        triggerEvent('register-menu:close', localPlayer)
+        triggerEvent('login-menu:open', localPlayer)
     end, false)
-end, true)
+end)
 
-addEvent('login-menu:close', true)
-addEventHandler('login-menu:close', root, function ()
+addEvent('register-menu:close', true)
+addEventHandler('register-menu:close', root, function ()
     destroyElement(window)
     showCursor(false)
     guiSetInputMode('allow_binds')

@@ -5,31 +5,33 @@ local function isPasswordValid(password)
 end
 
 -- create an account
-addCommandHandler('register', function (player, command, username, password)
-    if not username or not password then
-        return outputChatBox('SYNTAX: /' .. command .. ' [username] [password]', player, 255, 255, 255)
-    end
-
+addEvent('auth:register-attempt', true)
+addEventHandler('auth:register-attempt', root, function (username, password)
     -- check if an account with that username already exists
     if getAccount(username) then
-        return outputChatBox('An account already exists with that name.', player, 255, 100, 100)
+        return outputChatBox('An account already exists with that name.', source, 255, 100, 100)
     end
 
     -- is the password valid?
     if not isPasswordValid(password) then
-        return outputChatBox('The password supplied was not valid.', player, 255, 100, 100)
+        return outputChatBox('The password supplied was not valid.', source, 255, 100, 100)
     end
 
     -- create a hash of the password
+    local player = source
     passwordHash(password, 'bcrypt', {}, function (hashedPassword)
         -- create the account
         local account = addAccount(username, hashedPassword)
         setAccountData(account, 'hashed_password', hashedPassword)
 
-        -- let the user know of our success
-        outputChatBox('Your account has been successfully created! You may now login with /accountLogin', player, 100, 255, 100)
+        -- automatically login and spawn the player.
+        logIn(player, account, hashedPassword)
+        spawnPlayer(player, 0, 0, 10)
+        setCameraTarget(player, player)
+
+        return triggerClientEvent(player, 'register-menu:close', player)
     end)
-end, false, false)
+end)
 
 -- login to their account
 addEvent('auth:login-attempt', true)
